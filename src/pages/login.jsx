@@ -10,7 +10,14 @@ export default function Login({ setLogado }) {
       await login(email, senha);
       setLogado(true);
     } catch (err) {
-      alert("Login inválido");
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        alert("Login invalido");
+        return;
+      }
+
+      const detalhe = err?.response?.data?.message || err?.message || "Erro desconhecido";
+      alert(`Falha ao conectar no backend: ${detalhe}`);
     }
   }
 
