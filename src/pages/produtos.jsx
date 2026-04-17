@@ -72,20 +72,34 @@ export default function Produtos() {
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
-  async function salvar(e) {
+    async function salvar(e) {
     e.preventDefault();
     setErro(null);
 
-    if (!form.Nome || !form.Preco) {
-      setErro("Nome e Preço são obrigatórios.");
+    // normaliza inputs numéricos (aceita vírgula como separador decimal)
+    const precoRaw = (form.Preco ?? "").toString().replace(",", ".");
+    const precoNum = Number(precoRaw);
+    const estoqueNum = form.Estoque === "" ? 0 : Number(form.Estoque);
+    const secaoNum = form.SecaoId === "" ? 0 : Number(form.SecaoId);
+
+    if (!form.Nome || !isFinite(precoNum)) {
+      setErro("Nome e Preço válidos são obrigatórios (use ponto para decimais).");
+      return;
+    }
+    if (!Number.isInteger(estoqueNum) || estoqueNum < 0) {
+      setErro("Estoque deve ser um número inteiro >= 0.");
+      return;
+    }
+    if (!Number.isInteger(secaoNum) || secaoNum < 0) {
+      setErro("Seção (Id) deve ser um número inteiro >= 0.");
       return;
     }
 
     const payload = {
       Nome: form.Nome,
-      Preco: parseFloat(form.Preco),
-      Estoque: parseInt(form.Estoque || "0"),
-      SecaoId: parseInt(form.SecaoId || "0"),
+      Preco: precoNum,
+      Estoque: estoqueNum,
+      SecaoId: secaoNum,
       ImagemUrl: form.ImagemUrl || ""
     };
 
@@ -96,10 +110,22 @@ export default function Produtos() {
         await api.post("/produtos", payload);
       }
       fecharModal();
-      carregar();
+      await carregar();
     } catch (err) {
-      console.error(err);
-      setErro("Erro ao salvar produto.");
+      console.error("Erro ao salvar produto:", err);
+      // tenta extrair mensagem útil da API
+      let msg = "Erro ao salvar produto.";
+      if (err?.response) {
+        const r = err.response;
+        if (r.data) {
+          msg = r.data.title ?? r.data.message ?? JSON.stringify(r.data);
+        } else {
+          msg = `HTTP ${r.status} - ${r.statusText}`;
+        }
+      } else if (err?.message) {
+        msg = err.message;
+      }
+      setErro(msg);
     }
   }
 
