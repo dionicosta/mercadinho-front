@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const base = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const base = process.env.REACT_APP_API_URL || "/api";
 
 const api = axios.create({
   baseURL: base,
@@ -9,45 +9,41 @@ const api = axios.create({
   }
 });
 
-// interceptor → envia token automaticamente
+// sempre garante e loga o Authorization antes de enviar
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = "Bearer " + token;
-  }
+  try {
+    const token = localStorage.getItem("token");
+    config.headers = config.headers || {};
+    if (token) {
+      config.headers.Authorization = "Bearer " + token;
+    } else {
+      delete config.headers.Authorization;
+    }
 
-  // debug: log payloads de login
-  if (config.url && config.url.toLowerCase().includes("/auth/login")) {
-    console.debug("[API] Request LOGIN ->", {
-      url: config.baseURL + config.url,
-      headers: config.headers,
+    // debug: mostra as principais infos no console
+    console.debug("[api] request:", {
+      method: config.method?.toUpperCase(),
+      url: (config.baseURL || "") + (config.url || ""),
+      hasToken: !!token,
+      headersPreview: {
+        Authorization: !!config.headers.Authorization,
+        "Content-Type": config.headers["Content-Type"]
+      },
       data: config.data
     });
+  } catch (e) {
+    console.error("[api] intercept error", e);
   }
-
   return config;
-}, err => {
-  return Promise.reject(err);
-});
+}, err => Promise.reject(err));
 
-api.interceptors.response.use(resp => {
-  // debug para login
-  if (resp.config && resp.config.url && resp.config.url.toLowerCase().includes("/auth/login")) {
-    console.debug("[API] Response LOGIN <-", {
-      status: resp.status,
-      data: resp.data
-    });
-  }
-  return resp;
-}, err => {
-  // debug de erro
-  if (err.config && err.config.url && err.config.url.toLowerCase().includes("/auth/login")) {
-    console.error("[API] Response LOGIN ERROR <-", {
-      status: err.response?.status,
-      data: err.response?.data,
-      message: err.message
-    });
-  }
+api.interceptors.response.use(resp => resp, err => {
+  console.error("[api] response error:", {
+    status: err?.response?.status,
+    data: err?.response?.data,
+    message: err?.message,
+    url: err?.config?.url
+  });
   return Promise.reject(err);
 });
 
