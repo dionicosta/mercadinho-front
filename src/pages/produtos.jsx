@@ -80,7 +80,7 @@ export default function Produtos() {
     const precoRaw = (form.Preco ?? "").toString().replace(",", ".");
     const precoNum = Number(precoRaw);
     const estoqueNum = form.Estoque === "" ? 0 : Number(form.Estoque);
-    const secaoNum = form.SecaoId === "" ? 0 : Number(form.SecaoId);
+    const secaoNum = form.SecaoId === "" ? NaN : Number(form.SecaoId);
 
     if (!form.Nome || !isFinite(precoNum)) {
       setErro("Nome e Preço válidos são obrigatórios (use ponto para decimais).");
@@ -90,8 +90,8 @@ export default function Produtos() {
       setErro("Estoque deve ser um número inteiro >= 0.");
       return;
     }
-    if (!Number.isInteger(secaoNum) || secaoNum < 0) {
-      setErro("Seção (Id) deve ser um número inteiro >= 0.");
+    if (!Number.isInteger(secaoNum) || secaoNum <= 0) {
+      setErro("Seção (Id) deve ser um número inteiro > 0.");
       return;
     }
 
@@ -117,6 +117,11 @@ export default function Produtos() {
       let msg = "Erro ao salvar produto.";
       if (err?.response) {
         const r = err.response;
+        if (r.status === 401 || r.status === 403) {
+          msg = "Não autorizado. Faça login novamente para criar/editar produtos.";
+          setErro(msg);
+          return;
+        }
         if (r.data) {
           msg = r.data.title ?? r.data.message ?? JSON.stringify(r.data);
         } else {

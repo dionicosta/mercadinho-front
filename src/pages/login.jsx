@@ -23,7 +23,7 @@ export default function Login({ setLogado }) {
 
   return (
     <div>
-''      <h2>Login</h2>
+      <h2>Login</h2>
       <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
       <input type="password" placeholder="Senha" onChange={e => setSenha(e.target.value)} />
       <button onClick={entrar}>Entrar</button>
