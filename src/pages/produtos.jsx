@@ -72,7 +72,7 @@ export default function Produtos() {
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
-    async function salvar(e) {
+      async function salvar(e) {
     e.preventDefault();
     setErro(null);
 
@@ -103,6 +103,10 @@ export default function Produtos() {
       ImagemUrl: form.ImagemUrl || ""
     };
 
+    // debug: imprimir payload e token antes de enviar
+    console.debug("[Produtos] payload ->", payload);
+    console.debug("[Produtos] token ->", localStorage.getItem("token"));
+
     try {
       if (isEditing && form.Id) {
         await api.put(`/produtos/${form.Id}`, payload);
@@ -113,7 +117,7 @@ export default function Produtos() {
       await carregar();
     } catch (err) {
       console.error("Erro ao salvar produto:", err);
-      // tenta extrair mensagem útil da API
+      // ... resto do catch permanece igual
       let msg = "Erro ao salvar produto.";
       if (err?.response) {
         const r = err.response;
