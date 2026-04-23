@@ -1,0 +1,174 @@
+.colab-page {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.colab-bg-shape {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+.colab-bg-shape-a {
+  width: 500px;
+  height: 500px;
+  background: #6366f1;
+  top: -120px;
+  right: -100px;
+}
+.colab-bg-shape-b {
+  width: 350px;
+  height: 350px;
+  background: #06b6d4;
+  bottom: -60px;
+  left: -80px;
+}
+
+.colab-header-card {
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 1;
+}
+
+.colab-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  margin: 0 0 4px;
+}
+
+.colab-subtitle {
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.colab-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.colab-card {
+  background: var(--card-bg, #fff);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1;
+}
+
+.colab-card-header {
+  margin-bottom: 18px;
+}
+
+.colab-card-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  margin: 0 0 4px;
+}
+
+.colab-card-header p {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+}
+
+.colab-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.colab-form .input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.colab-error {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+
+.colab-loading,
+.colab-vazio {
+  padding: 16px 0;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.9rem;
+}
+
+.colab-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.colab-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--bg-subtle, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  gap: 12px;
+}
+
+.colab-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.colab-nome {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary, #1e293b);
+}
+
+.colab-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.colab-data {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.perfil-badge.perfil-estoquista {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.perfil-badge.perfil-auxiliar {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+@media print {
+  .colab-bg-shape,
+  .colab-actions {
+    display: none !important;
+  }
+}

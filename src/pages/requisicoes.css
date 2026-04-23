@@ -1,0 +1,401 @@
+.req-container {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.req-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.req-header-acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.req-filtros {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.req-filtro-input {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  outline: none;
+  background: #fff;
+}
+
+.req-filtro-input:focus {
+  border-color: #4f46e5;
+}
+
+.req-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.btn-novo {
+  padding: 9px 18px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-novo:hover {
+  background: #4338ca;
+}
+
+.btn-print {
+  padding: 9px 18px;
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-print:hover {
+  background: #d1d5db;
+}
+
+.req-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.req-tabela th {
+  background: #f3f4f6;
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.04em;
+}
+
+.req-tabela td {
+  padding: 11px 14px;
+  font-size: 0.88rem;
+  color: #374151;
+  border-top: 1px solid #f3f4f6;
+}
+
+.req-tabela tr:hover td {
+  background: #f9fafb;
+}
+
+.req-badge {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-pendente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-aprovada {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-cancelada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.req-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-detalhe {
+  padding: 5px 12px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.btn-detalhe:hover {
+  background: #2563eb;
+}
+
+.btn-aprovar {
+  padding: 5px 12px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.btn-aprovar:hover {
+  background: #047857;
+}
+
+.btn-cancelar-req {
+  padding: 5px 12px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.btn-cancelar-req:hover {
+  background: #dc2626;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  min-width: 380px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-lg {
+  max-width: 720px;
+}
+
+.modal-box h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #1a1a2e;
+}
+
+.req-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.req-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.req-form input[type="text"],
+.req-form input[type="number"],
+.req-form select {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.req-form input:focus,
+.req-form select:focus {
+  border-color: #4f46e5;
+}
+
+.req-itens-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.btn-add-item {
+  padding: 5px 12px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.btn-add-item:hover {
+  background: #047857;
+}
+
+.req-item-row {
+  display: grid;
+  grid-template-columns: 2fr 80px 36px;
+  gap: 8px;
+  align-items: center;
+}
+
+.req-item-row select,
+.req-item-row input {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.btn-remover-item {
+  padding: 6px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.btn-remover-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.input-qtd-aprovar {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  width: 80px;
+  outline: none;
+}
+
+.req-detalhe-info {
+  font-size: 0.88rem;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.req-obs {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-salvar {
+  padding: 9px 20px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-salvar:hover {
+  background: #4338ca;
+}
+
+.btn-salvar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  padding: 9px 18px;
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-cancelar:hover {
+  background: #d1d5db;
+}
+
+.req-loading,
+.req-vazio {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.req-erro {
+  color: #dc2626;
+  padding: 12px;
+}
+
+.req-erro-form {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+@media print {
+  .btn-print,
+  .btn-novo,
+  .btn-cancelar,
+  .btn-salvar,
+  .btn-detalhe,
+  .btn-aprovar,
+  .btn-cancelar-req,
+  .btn-add-item,
+  .btn-remover-item,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .req-container {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+@media (max-width: 960px) {
+  .req-filtros {
+    grid-template-columns: 1fr;
+  }
+}

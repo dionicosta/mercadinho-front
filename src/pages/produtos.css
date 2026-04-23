@@ -1,0 +1,538 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Work+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --bg-1: #f5f8ff;
+  --bg-2: #eef6f2;
+  --surface: #ffffff;
+  --text-1: #132034;
+  --text-2: #5b6678;
+  --brand: #006c67;
+  --brand-2: #0a8f87;
+  --danger: #b4273d;
+  --line: #dbe3ef;
+  --shadow: 0 14px 36px rgba(16, 38, 70, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.produtos-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 24px;
+  color: var(--text-1);
+  font-family: "Work Sans", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  overflow: hidden;
+}
+
+.produtos-bg-shape {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(6px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.produtos-bg-shape-a {
+  width: 300px;
+  height: 300px;
+  right: -80px;
+  top: -80px;
+  background: radial-gradient(circle at center, #42a5f5 0%, #a5d6a7 70%);
+}
+
+.produtos-bg-shape-b {
+  width: 260px;
+  height: 260px;
+  left: -90px;
+  bottom: -80px;
+  background: radial-gradient(circle at center, #80cbc4 0%, #9fa8da 70%);
+}
+
+.produtos-header-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.produtos-title {
+  margin: 0 0 4px;
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.produtos-subtitle {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.perfil-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.perfil-badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.perfil-principal {
+  color: #fff;
+  background: linear-gradient(120deg, #1e4b9d, #2f6ace);
+}
+
+.perfil-secundario {
+  color: #1f2d43;
+  background: #d8e4f8;
+}
+
+.perfil-usuario {
+  color: #42526a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sync-badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.sync-loading {
+  color: #6f5312;
+  background: #fff1c2;
+}
+
+.sync-synced {
+  color: #0f5132;
+  background: #d9f7e9;
+}
+
+.sync-error {
+  color: #8a2031;
+  background: #ffe1e7;
+}
+
+.produtos-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-family: "Work Sans", "Segoe UI", sans-serif;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.btn-primary {
+  color: #fff;
+  border-color: var(--brand);
+  background: linear-gradient(120deg, var(--brand), var(--brand-2));
+  box-shadow: 0 6px 16px rgba(10, 143, 135, 0.28);
+}
+
+.btn-danger {
+  color: #fff;
+  border-color: #8f2030;
+  background: linear-gradient(120deg, #b4273d, #d14f61);
+}
+
+.btn-ghost {
+  color: var(--text-1);
+  border-color: var(--line);
+  background: #fff;
+}
+
+.btn-small {
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+.produtos-loading {
+  position: relative;
+  z-index: 1;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.produtos-filtros-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 2.3fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow);
+}
+
+.filtro-busca-wrap,
+.filtro-select-wrap {
+  display: grid;
+  gap: 6px;
+}
+
+.filtro-label {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #42526a;
+}
+
+.input-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #53627a 50%), linear-gradient(135deg, #53627a 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(1.05em + 2px), calc(100% - 14px) calc(1.05em + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+.produtos-error-banner {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #f6b8c2;
+  background: #ffeef1;
+  color: #9a2135;
+  font-weight: 600;
+}
+
+.admins-card {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.admins-header h3 {
+  margin: 0;
+  font-family: "Sora", "Segoe UI", sans-serif;
+}
+
+.admins-header p {
+  margin: 6px 0 10px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.admins-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.admins-form .btn {
+  white-space: nowrap;
+}
+
+.admins-loading {
+  color: var(--text-2);
+  padding: 6px 0;
+}
+
+.admins-lista {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e7edf8;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fbfcff;
+}
+
+.admin-email {
+  font-weight: 700;
+}
+
+.admin-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  color: #61708a;
+  font-size: 13px;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-disponibilidade {
+  margin: 0 0 10px;
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-disabled-indisponivel,
+.btn-disabled-indisponivel:disabled {
+  filter: grayscale(100%);
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.btn-disabled-indisponivel:hover {
+  transform: none;
+}
+
+.produtos-table-wrapper {
+  position: relative;
+  z-index: 1;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: auto;
+}
+
+.produtos-table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+}
+
+.produtos-table thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: 12px;
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #3f4a5d;
+  border-bottom: 1px solid var(--line);
+  background: #eef3fb;
+}
+
+.produtos-table tbody td {
+  padding: 12px;
+  border-top: 1px solid #edf2fa;
+  color: #223149;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.produtos-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+.td-strong {
+  font-weight: 600;
+}
+
+.produtos-empty {
+  text-align: center;
+  color: var(--text-2);
+  padding: 30px 12px;
+}
+
+.acoes-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.paginacao {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.paginacao-info {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.paginacao-numeros {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-page {
+  min-width: 36px;
+  padding: 8px 10px;
+  border-color: var(--line);
+  background: #fff;
+}
+
+.btn-page-active {
+  color: #fff;
+  border-color: var(--brand);
+  background: linear-gradient(120deg, var(--brand), var(--brand-2));
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 22, 31, 0.54);
+  padding: 16px;
+}
+
+.modal-card {
+  width: min(820px, 100%);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 22px 52px rgba(14, 22, 44, 0.26);
+  padding: 20px;
+}
+
+.modal-title {
+  margin: 0;
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 24px;
+}
+
+.modal-subtitle {
+  margin: 6px 0 14px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.modal-form {
+  display: grid;
+  gap: 10px;
+}
+
+.form-row {
+  display: grid;
+  gap: 10px;
+}
+
+.form-row-3 {
+  grid-template-columns: 1.8fr 1fr 1fr;
+}
+
+.form-row-2 {
+  grid-template-columns: 1fr 2fr;
+}
+
+.input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd6e8;
+  background: #fcfdff;
+  color: var(--text-1);
+  font-family: "Work Sans", "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 3px rgba(10, 143, 135, 0.16);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .produtos-page {
+    padding: 14px;
+  }
+
+  .produtos-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-row-3,
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .paginacao-numeros {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .produtos-filtros-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admins-form {
+    grid-template-columns: 1fr;
+  }
+}
