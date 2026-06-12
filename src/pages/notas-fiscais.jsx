@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
-import { exportarNotaFiscalDetalhePdf, exportarNotasFiscaisPdf } from "../services/pdf-export";
+import {
+  exportarNotaFiscalDetalhePdf,
+  exportarNotasFiscaisPdf,
+  imprimirNotaFiscalDetalhePdf,
+  imprimirNotasFiscaisPdf
+} from "../services/pdf-export";
 import "./notas-fiscais.css";
 
 const ITEM_VAZIO = { produtoId: "", quantidade: 1, precoUnitario: "" };
@@ -164,6 +169,9 @@ function NotasFiscais({ sessao }) {
           <button className="btn-print" onClick={() => exportarNotasFiscaisPdf(listaFiltrada, sessao?.nome)}>
             Exportar PDF
           </button>
+          <button className="btn-print" onClick={() => imprimirNotasFiscaisPdf(listaFiltrada, sessao?.nome)}>
+            Imprimir dados
+          </button>
           <button className="btn-novo" onClick={abrirNovo}>
             + Nova Nota Fiscal
           </button>
@@ -299,6 +307,13 @@ function NotasFiscais({ sessao }) {
                 onClick={() => exportarNotaFiscalDetalhePdf(detalhe, sessao?.nome)}
               >
                 Exportar PDF
+              </button>
+              <button
+                className="btn-print"
+                type="button"
+                onClick={() => imprimirNotaFiscalDetalhePdf(detalhe, sessao?.nome)}
+              >
+                Imprimir dados
               </button>
               <button className="btn-cancelar" onClick={() => setDetalhe(null)}>
                 Fechar

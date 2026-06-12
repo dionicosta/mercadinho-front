@@ -11,6 +11,11 @@
   gap: 12px;
 }
 
+.dash-topo-acoes {
+  display: flex;
+  gap: 8px;
+}
+
 .dash-titulo {
   font-size: 1.6rem;
   font-weight: 700;

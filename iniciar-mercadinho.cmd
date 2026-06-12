@@ -17,5 +17,8 @@ echo Mercadinho iniciado em janelas separadas.
 echo API:  http://localhost:5122
 echo Front: http://localhost:3000
 echo.
+echo Aguardando o frontend subir...
+powershell -NoProfile -Command "Start-Sleep -Seconds 5" >nul 2>&1
+start "" "http://localhost:3000"
 
 endlocal

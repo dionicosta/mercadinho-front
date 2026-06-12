@@ -282,10 +282,9 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       const pareceHtml = typeof res.data === "string"
         && /<!doctype html>|<html/i.test(res.data);
 
-      // Fallback para evitar rota errada/cached env apontando para o dev server do React.
+      // Se a resposta vier como HTML, o frontend caiu em uma rota errada e deve falhar de forma explícita.
       if (valor === null && pareceHtml) {
-        const resFallback = await api.get("http://localhost:5122/api/auth/admins/existe-principal");
-        valor = interpretarResposta(resFallback.data);
+        throw new Error("A rota /api/auth/admins/existe-principal retornou HTML em vez de JSON.");
       }
 
       if (typeof valor !== "boolean") {

@@ -36,12 +36,21 @@ function App() {
         const status = err?.response?.status;
         if (status === 401) {
           console.warn("Sessao expirada ou token invalido. Redirecionando para login.");
+          logout();
+          setSessao(null);
+          setLogado(false);
         } else {
           console.error("Falha ao validar sessao:", err);
+          // Se a API estiver fora no momento do boot, preserva a sessao local e evita logout indevido.
+          const sessaoLocal = getSessao();
+          if (sessaoLocal?.token) {
+            setSessao(sessaoLocal);
+            setLogado(true);
+          } else {
+            setSessao(null);
+            setLogado(false);
+          }
         }
-        logout();
-        setSessao(null);
-        setLogado(false);
       } finally {
         setValidandoSessao(false);
       }

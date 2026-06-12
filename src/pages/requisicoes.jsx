@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
-import { exportarRequisicaoDetalhePdf, exportarRequisicoesPdf } from "../services/pdf-export";
+import {
+  exportarRequisicaoDetalhePdf,
+  exportarRequisicoesPdf,
+  imprimirRequisicaoDetalhePdf,
+  imprimirRequisicoesPdf
+} from "../services/pdf-export";
 import "./requisicoes.css";
 
 const ITEM_VAZIO = { produtoId: "", quantidadeSolicitada: 1 };
@@ -267,6 +272,9 @@ function Requisicoes({ sessao }) {
           <button className="btn-print" onClick={() => exportarRequisicoesPdf(listaFiltrada, sessao?.nome)}>
             Exportar PDF
           </button>
+          <button className="btn-print" onClick={() => imprimirRequisicoesPdf(listaFiltrada, sessao?.nome)}>
+            Imprimir dados
+          </button>
           <button className="btn-novo" onClick={abrirNovo}>
             + Nova Requisição
           </button>
@@ -418,6 +426,13 @@ function Requisicoes({ sessao }) {
                 onClick={() => exportarRequisicaoDetalhePdf(detalhe, sessao?.nome)}
               >
                 Exportar PDF
+              </button>
+              <button
+                className="btn-print"
+                type="button"
+                onClick={() => imprimirRequisicaoDetalhePdf(detalhe, sessao?.nome)}
+              >
+                Imprimir dados
               </button>
               <button className="btn-cancelar" onClick={() => setDetalhe(null)}>
                 Fechar

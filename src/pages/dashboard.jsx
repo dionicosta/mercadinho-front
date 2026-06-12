@@ -1,6 +1,7 @@
+
 import { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
-import { exportarDashboardPdf } from "../services/pdf-export";
+import { exportarDashboardPdf, imprimirDashboardPdf } from "../services/pdf-export";
 import "./dashboard.css";
 
 function Dashboard({ sessao }) {
@@ -99,9 +100,14 @@ function Dashboard({ sessao }) {
     <div className="dashboard-container">
       <div className="dash-topo">
         <h2 className="dash-titulo">Dashboard</h2>
-        <button className="btn-atualizar" onClick={() => exportarDashboardPdf(dados, sessao?.nome)}>
-          Exportar PDF
-        </button>
+        <div className="dash-topo-acoes">
+          <button className="btn-atualizar" onClick={() => exportarDashboardPdf(dados, sessao?.nome)}>
+            Exportar PDF
+          </button>
+          <button className="btn-atualizar" onClick={() => imprimirDashboardPdf(dados, sessao?.nome)}>
+            Imprimir dados
+          </button>
+        </div>
       </div>
 
       <div className="dash-grid">

@@ -4,9 +4,6 @@ function resolverBaseUrl() {
   const apiUrl = (process.env.REACT_APP_API_URL || "").trim();
   if (apiUrl) return apiUrl;
 
-  // Em desenvolvimento, evita depender de proxy e usa a porta padrão da API.
-  if (process.env.NODE_ENV === "development") return "http://localhost:5122/api";
-
   return "/api";
 }
 
