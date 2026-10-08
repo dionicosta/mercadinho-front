@@ -1,0 +1,347 @@
+/* Telas da rede: lojas, transferencias, visao consolidada, auditoria e conta. */
+.rd-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.rd-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.rd-subtitulo {
+  font-size: 0.88rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.rd-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rd-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.rd-btn:hover {
+  background: #d1d5db;
+}
+
+.rd-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rd-btn-primario {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.rd-btn-primario:hover {
+  background: #4338ca;
+}
+
+.rd-btn-perigo {
+  background: #ef4444;
+  color: #fff;
+}
+
+.rd-btn-perigo:hover {
+  background: #dc2626;
+}
+
+.rd-btn-sucesso {
+  background: #059669;
+  color: #fff;
+}
+
+.rd-btn-sucesso:hover {
+  background: #047857;
+}
+
+.rd-btn-pequeno {
+  padding: 5px 11px;
+  font-size: 0.8rem;
+}
+
+.rd-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.rd-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.rd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.rd-indicador {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 16px 18px;
+}
+
+.rd-indicador-rotulo {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.rd-indicador-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-top: 6px;
+}
+
+.rd-tabela-wrap {
+  overflow-x: auto;
+}
+
+.rd-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.rd-card .rd-tabela {
+  box-shadow: none;
+  border: 1px solid #f3f4f6;
+}
+
+.rd-tabela th {
+  background: #f3f4f6;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.rd-tabela td {
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  color: #374151;
+  border-top: 1px solid #f3f4f6;
+  vertical-align: top;
+}
+
+.rd-num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.rd-alerta {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.rd-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.rd-badge-verde {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.rd-badge-vermelho {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.rd-badge-amarelo {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rd-badge-azul {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.rd-badge-roxo {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.rd-filtros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rd-input,
+.rd-form input,
+.rd-form select {
+  padding: 8px 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  background: #fff;
+  outline: none;
+}
+
+.rd-input:focus,
+.rd-form input:focus,
+.rd-form select:focus {
+  border-color: #4f46e5;
+}
+
+.rd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rd-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.rd-form-linha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.rd-item-linha {
+  display: grid;
+  grid-template-columns: 1fr 110px 40px;
+  gap: 8px;
+  align-items: center;
+}
+
+.rd-check {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+  font-weight: 500 !important;
+}
+
+.rd-erro {
+  color: #b91c1c;
+  font-size: 0.86rem;
+  margin: 8px 0;
+}
+
+.rd-sucesso {
+  color: #047857;
+  font-size: 0.86rem;
+  margin: 8px 0;
+}
+
+.rd-vazio {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.rd-ajuda {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.rd-modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.rd-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 26px 30px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.rd-modal-largo {
+  max-width: 760px;
+}
+
+.rd-modal h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1a1a2e;
+}
+
+.rd-modal-acoes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.rd-paginacao {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 14px;
+  font-size: 0.86rem;
+  color: #6b7280;
+}

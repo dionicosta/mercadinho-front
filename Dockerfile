@@ -21,4 +21,7 @@ COPY --from=build /app/build ./build
 ENV PORT=3000
 EXPOSE 3000
 
+# Processo sem privilegios de root dentro do container.
+USER node
+
 CMD ["node", "server.js"]

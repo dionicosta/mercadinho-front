@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import api from "../services/api";
+import api, { extrairErro } from "../services/api";
 import "./fornecedores.css";
 
 const FORM_VAZIO = {
@@ -22,7 +22,8 @@ function Fornecedores({ sessao }) {
   const [erroForm, setErroForm] = useState(null);
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(null);
 
-  const isPrincipal = sessao?.isPrincipal;
+  // Fornecedores sao cadastro da rede: todas as lojas consultam, so a matriz (ou o super admin) altera.
+  const isPrincipal = sessao?.podeGerirRede;
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -91,11 +92,7 @@ function Fornecedores({ sessao }) {
       fecharModal();
       carregar();
     } catch (err) {
-      setErroForm(
-        err?.response?.data?.message ||
-          err?.response?.data ||
-          "Erro ao salvar fornecedor."
-      );
+      setErroForm(extrairErro(err, "Erro ao salvar fornecedor."));
     } finally {
       setSalvando(false);
     }
@@ -107,11 +104,7 @@ function Fornecedores({ sessao }) {
       setConfirmandoExclusao(null);
       carregar();
     } catch (err) {
-      alert(
-        err?.response?.data?.message ||
-          err?.response?.data ||
-          "Erro ao excluir fornecedor."
-      );
+      alert(extrairErro(err, "Erro ao excluir fornecedor."));
     }
   }
 

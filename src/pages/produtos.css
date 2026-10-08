@@ -536,3 +536,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}

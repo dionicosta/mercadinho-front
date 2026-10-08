@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import api from "../services/api";
+import api, { extrairErro } from "../services/api";
 import { getPerfilAtual, getSessao, logout } from "../services/auth";
 import "./produtos.css";
 
@@ -15,9 +15,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
   const [admins, setAdmins] = useState([]);
   const [loadingAdmins, setLoadingAdmins] = useState(false);
   const [erroAdmins, setErroAdmins] = useState(null);
-  const [existePrincipal, setExistePrincipal] = useState(null);
-  const [loadingExistePrincipal, setLoadingExistePrincipal] = useState(false);
-  const [adminForm, setAdminForm] = useState({ email: "", senha: "" });
+  const [adminForm, setAdminForm] = useState({ nome: "", email: "", senha: "" });
 
   // modal / form
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +25,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
     Nome: "",
     Preco: "",
     Estoque: "",
+    EstoqueMinimo: "",
     SecaoId: "",
     ImagemUrl: ""
   });
@@ -40,11 +39,12 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
   }
 
   const sessao = sessaoInicial || sessaoLocal;
+  // isPrincipal: administra a loja atual (principal da loja ou super admin da rede).
   const isPrincipal = !!sessao?.isPrincipal;
-  const podeAssumirPrincipal = !isPrincipal
-    && statusSessao === "synced"
-    && !loadingExistePrincipal
-    && existePrincipal === false;
+  const isPrincipalDaLoja = !!sessao?.isPrincipalDaLoja;
+  // O catalogo (nome, secao, imagem) e da rede: so a matriz ou o super admin alteram.
+  const podeCatalogo = !!sessao?.podeCatalogo;
+  const podeGerirRede = !!sessao?.podeGerirRede;
 
   function formatarPreco(valor) {
     const numero = Number(valor);
@@ -171,13 +171,11 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
     if (statusSessao !== "synced") return;
 
     if (isPrincipal) {
-      setExistePrincipal(true);
       carregarAdmins();
       return;
     }
 
     setAdmins([]);
-    carregarDisponibilidadePrincipal();
   }, [isPrincipal, statusSessao]);
 
   useEffect(() => {
@@ -189,21 +187,6 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       setPage(totalPages);
     }
   }, [page, totalPages]);
-
-  function extrairMensagemErroAdmin(err, fallback) {
-    const status = err?.response?.status;
-    const data = err?.response?.data;
-
-    if (status === 401) return "Sessão expirada. Faça login novamente.";
-    if (status === 403) return "Sem permissão para esta ação. Faça logout e login novamente para atualizar o perfil.";
-
-    if (typeof data === "string" && data.trim()) return data;
-    if (data?.message) return data.message;
-    if (data?.detail) return data.detail;
-    if (data?.title) return data.title;
-
-    return fallback;
-  }
 
   async function carregar() {
     setLoading(true);
@@ -234,73 +217,6 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
     }
   }
 
-  async function carregarDisponibilidadePrincipal() {
-    setLoadingExistePrincipal(true);
-    setErroAdmins(null);
-    try {
-      const interpretarResposta = (data) => {
-        if (typeof data === "boolean") return data;
-
-        if (typeof data === "number") {
-          if (data === 1) return true;
-          if (data === 0) return false;
-        }
-
-        if (typeof data === "string") {
-          const texto = data.trim().toLowerCase();
-          if (texto === "true") return true;
-          if (texto === "false") return false;
-          return null;
-        }
-
-        if (data && typeof data === "object") {
-          const bruto = data?.existePrincipal
-            ?? data?.ExistePrincipal
-            ?? data?.value
-            ?? data?.Value
-            ?? data?.resultado
-            ?? data?.Resultado;
-
-          if (typeof bruto === "boolean") return bruto;
-          if (typeof bruto === "number") {
-            if (bruto === 1) return true;
-            if (bruto === 0) return false;
-          }
-          if (typeof bruto === "string") {
-            const texto = bruto.trim().toLowerCase();
-            if (texto === "true") return true;
-            if (texto === "false") return false;
-          }
-        }
-
-        return null;
-      };
-
-      const res = await api.get("/auth/admins/existe-principal");
-      let valor = interpretarResposta(res.data);
-
-      const pareceHtml = typeof res.data === "string"
-        && /<!doctype html>|<html/i.test(res.data);
-
-      // Se a resposta vier como HTML, o frontend caiu em uma rota errada e deve falhar de forma explícita.
-      if (valor === null && pareceHtml) {
-        throw new Error("A rota /api/auth/admins/existe-principal retornou HTML em vez de JSON.");
-      }
-
-      if (typeof valor !== "boolean") {
-        throw new Error("Resposta inválida ao verificar principal.");
-      }
-
-      setExistePrincipal(valor);
-    } catch (err) {
-      console.error(err);
-      setExistePrincipal(true);
-      setErroAdmins("Nao foi possivel verificar o status do principal no momento.");
-    } finally {
-      setLoadingExistePrincipal(false);
-    }
-  }
-
   async function criarAdminSecundario(e) {
     e.preventDefault();
     setErroAdmins(null);
@@ -312,13 +228,14 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
 
     try {
       await api.post("/auth/admins/secundarios", {
+        Nome: adminForm.nome.trim(),
         Email: adminForm.email.trim(),
         Senha: adminForm.senha
       });
-      setAdminForm({ email: "", senha: "" });
+      setAdminForm({ nome: "", email: "", senha: "" });
       await carregarAdmins();
     } catch (err) {
-      setErroAdmins(extrairMensagemErroAdmin(err, "Erro ao criar admin secundário."));
+      setErroAdmins(extrairErro(err, "Erro ao criar admin secundário."));
     }
   }
 
@@ -330,26 +247,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       await api.delete(`/auth/admins/secundarios/${id}`);
       await carregarAdmins();
     } catch (err) {
-      setErroAdmins(extrairMensagemErroAdmin(err, "Erro ao remover admin secundário."));
-    }
-  }
-
-  async function assumirPrincipal() {
-    if (!podeAssumirPrincipal) return;
-
-    if (!window.confirm("Deseja assumir o cargo de admin principal?")) return;
-
-    setErroAdmins(null);
-    try {
-      await api.post("/auth/admins/assumir-principal");
-      setExistePrincipal(true);
-      await carregarSessaoAtual();
-      await carregarAdmins();
-    } catch (err) {
-      if (err?.response?.status === 403) {
-        setExistePrincipal(true);
-      }
-      setErroAdmins(extrairMensagemErroAdmin(err, "Erro ao assumir admin principal."));
+      setErroAdmins(extrairErro(err, "Erro ao remover admin secundário."));
     }
   }
 
@@ -366,12 +264,12 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       setSessao(null);
       setLogado(false);
     } catch (err) {
-      setErroAdmins(extrairMensagemErroAdmin(err, "Erro ao transferir admin principal."));
+      setErroAdmins(extrairErro(err, "Erro ao transferir admin principal."));
     }
   }
 
   function abrirNovo() {
-    setForm({ Id: null, Nome: "", Preco: "", Estoque: "", SecaoId: "", ImagemUrl: "" });
+    setForm({ Id: null, Nome: "", Preco: "", Estoque: "", EstoqueMinimo: "", SecaoId: "", ImagemUrl: "" });
     setIsEditing(false);
     setIsModalOpen(true);
   }
@@ -382,6 +280,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       Nome: p.Nome ?? p.nome ?? "",
       Preco: (p.Preco ?? p.preco ?? "").toString(),
       Estoque: (p.Estoque ?? p.estoque ?? "").toString(),
+      EstoqueMinimo: (p.EstoqueMinimo ?? p.estoqueMinimo ?? "").toString(),
       SecaoId: (p.SecaoId ?? p.secaoId ?? "").toString(),
       ImagemUrl: p.ImagemUrl ?? p.imagemUrl ?? ""
     });
@@ -407,6 +306,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       const precoRaw = (form.Preco ?? "").toString().replace(",", ".");
       const precoNum = Number(precoRaw);
       const estoqueNum = form.Estoque === "" ? 0 : Number(form.Estoque);
+      const minimoNum = form.EstoqueMinimo === "" ? 0 : Number(form.EstoqueMinimo);
       const secaoNum = form.SecaoId === "" ? NaN : Number(form.SecaoId);
 
       if (!form.Nome || !isFinite(precoNum)) {
@@ -415,6 +315,10 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       }
       if (!Number.isInteger(estoqueNum) || estoqueNum < 0) {
         setErro("Estoque deve ser um número inteiro >= 0.");
+        return;
+      }
+      if (!Number.isInteger(minimoNum) || minimoNum < 0) {
+        setErro("Estoque mínimo deve ser um número inteiro >= 0.");
         return;
       }
       if (!Number.isInteger(secaoNum) || secaoNum <= 0) {
@@ -426,53 +330,27 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
         Nome: form.Nome,
         Preco: precoNum,
         Estoque: estoqueNum,
+        EstoqueMinimo: minimoNum,
         SecaoId: secaoNum,
         ImagemUrl: form.ImagemUrl || ""
       };
 
-      // debug: imprimir payload e token antes de enviar
-      console.debug("[Produtos] payload ->", payload);
-      const token = localStorage.getItem("token");
-      console.debug("[Produtos] token ->", token);
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
       try {
         if (isEditing && form.Id) {
-          await api.put(`/produtos/${form.Id}`, payload, { headers });
+          await api.put(`/produtos/${form.Id}`, payload);
         } else {
-          await api.post("/produtos", payload, { headers });
+          await api.post("/produtos", payload);
         }
         fecharModal();
         await carregar();
       } catch (err) {
-        // log mais detalhado para diagnóstico
-        console.error("Erro ao salvar produto:", err);
-        console.error("Resposta do servidor:", err?.response?.data);
-
-        let msg = "Erro ao salvar produto.";
-        if (err?.response) {
-          const r = err.response;
-          if (r.status === 401 || r.status === 403) {
-            msg = "Não autorizado. Faça login novamente para criar/editar produtos.";
-            setErro(msg);
-            return;
-          }
-          // prioriza campo `error` (novo no backend em Development), depois `message`/`title`
-          if (r.data) {
-            msg = r.data.error ?? r.data.title ?? r.data.message ?? JSON.stringify(r.data);
-          } else {
-            msg = `HTTP ${r.status} - ${r.statusText}`;
-          }
-        } else if (err?.message) {
-          msg = err.message;
-        }
-        setErro(msg);
+        setErro(extrairErro(err, "Erro ao salvar produto."));
       }
     }
 
   async function excluir(id) {
-      if (!isPrincipal) {
-      setErro("Apenas admin principal pode excluir produtos.");
+      if (!podeGerirRede) {
+      setErro("Somente a matriz pode excluir produtos do catálogo da rede.");
       return;
     }
       if (!window.confirm("Confirma exclusão do produto?")) return;
@@ -483,8 +361,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       setPage(next);
       carregar();
     } catch (err) {
-      console.error(err);
-      setErro("Erro ao excluir produto.");
+      setErro(extrairErro(err, "Erro ao excluir produto."));
     }
   }
 
@@ -509,8 +386,9 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
           <p className="produtos-subtitle">Controle catalogo, estoque e auditoria de alteracoes em um unico painel.</p>
           <div className="perfil-badges">
             <span className={`perfil-badge ${isPrincipal ? "perfil-principal" : "perfil-secundario"}`}>
-              {isPrincipal ? "Selo: Principal" : "Selo: Secundario"}
+              {sessao?.isSuperAdmin ? "Selo: Super Admin" : isPrincipal ? "Selo: Principal" : "Selo: Secundario"}
             </span>
+            {sessao?.loja?.nome && <span className="perfil-usuario">Loja: {sessao.loja.nome}</span>}
             {sessao?.nome && <span className="perfil-usuario">Logado como: {sessao.nome}</span>}
             <span className={`sync-badge sync-${statusSessao}`}>
               {statusSessao === "loading" && "Validando sessao..."}
@@ -521,7 +399,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
         </div>
 
         <div className="produtos-actions">
-          <button className="btn btn-primary" onClick={abrirNovo}>Novo Produto</button>
+          {podeCatalogo && <button className="btn btn-primary" onClick={abrirNovo}>Novo Produto</button>}
           <button className="btn btn-ghost" onClick={carregar}>Atualizar Lista</button>
           <button className="btn btn-ghost" onClick={() => window.print()}>Imprimir / PDF</button>
           <button className="btn btn-danger" onClick={sair}>Sair</button>
@@ -532,10 +410,16 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
         <section className="admins-card">
           <div className="admins-header">
             <h3>Admins Secundarios</h3>
-            <p>Somente admin principal pode criar (maximo 2) e remover admins secundarios.</p>
+            <p>Admins desta loja. O limite de admins secundarios e definido pelo plano da rede.</p>
           </div>
 
           <form className="admins-form" onSubmit={criarAdminSecundario}>
+            <input
+              className="input"
+              placeholder="Nome"
+              value={adminForm.nome}
+              onChange={e => setAdminForm(prev => ({ ...prev, nome: e.target.value }))}
+            />
             <input
               className="input"
               placeholder="Email do admin secundario"
@@ -545,7 +429,8 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
             <input
               className="input"
               type="password"
-              placeholder="Senha"
+              placeholder="Senha (8+ caracteres, letra e numero)"
+              autoComplete="new-password"
               value={adminForm.senha}
               onChange={e => setAdminForm(prev => ({ ...prev, senha: e.target.value }))}
             />
@@ -561,24 +446,27 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
               {(admins || []).map(admin => {
                 const tipo = (admin.Tipo || admin.tipo || "").toString().toUpperCase();
                 const isAdminPrincipal = tipo === "PRINCIPAL";
+                const isAdminSuper = tipo === "SUPER_ADMIN";
 
                 return (
                   <div className="admin-item" key={admin.Id ?? admin.id}>
                     <div>
                       <div className="admin-email">{admin.Email ?? admin.email}</div>
                       <div className="admin-meta">
-                        <span className={`perfil-badge ${isAdminPrincipal ? "perfil-principal" : "perfil-secundario"}`}>
-                          {isAdminPrincipal ? "principal" : "secundario"}
+                        <span className={`perfil-badge ${isAdminPrincipal || isAdminSuper ? "perfil-principal" : "perfil-secundario"}`}>
+                          {isAdminSuper ? "super admin" : isAdminPrincipal ? "principal" : "secundario"}
                         </span>
                         <span>Criado em: {formatarDataHora(admin.CriadoEm ?? admin.criadoEm)}</span>
                       </div>
                     </div>
 
-                    {!isAdminPrincipal && (
+                    {!isAdminPrincipal && !isAdminSuper && (
                       <div className="admin-actions">
-                        <button className="btn btn-small btn-primary" onClick={() => transferirPrincipal(admin.Id ?? admin.id)}>
-                          Tornar Principal
-                        </button>
+                        {isPrincipalDaLoja && (
+                          <button className="btn btn-small btn-primary" onClick={() => transferirPrincipal(admin.Id ?? admin.id)}>
+                            Tornar Principal
+                          </button>
+                        )}
                         <button className="btn btn-small btn-danger" onClick={() => removerAdminSecundario(admin.Id ?? admin.id)}>
                           Remover
                         </button>
@@ -589,34 +477,6 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
               })}
             </div>
           )}
-        </section>
-      )}
-
-      {!isPrincipal && (
-        <section className="admins-card">
-          <div className="admins-header">
-            <h3>Recuperar Admin Principal</h3>
-            <p>Use esta opção apenas quando não existir nenhum admin principal cadastrado.</p>
-          </div>
-
-          {erroAdmins && <div className="produtos-error-banner">{erroAdmins}</div>}
-
-          <p className="admin-disponibilidade">
-            {loadingExistePrincipal && "Verificando disponibilidade..."}
-            {!loadingExistePrincipal && existePrincipal === true && "Indisponivel: ja existe um admin principal ativo."}
-            {!loadingExistePrincipal && existePrincipal === false && "Disponivel: nenhum principal ativo encontrado."}
-            {!loadingExistePrincipal && existePrincipal === null && "Nao foi possivel validar a disponibilidade."}
-          </p>
-
-          <button
-            className={`btn btn-primary ${podeAssumirPrincipal ? "" : "btn-disabled-indisponivel"}`}
-            type="button"
-            onClick={assumirPrincipal}
-            disabled={!podeAssumirPrincipal}
-            title={podeAssumirPrincipal ? "Assumir admin principal" : "Indisponivel enquanto houver principal ativo"}
-          >
-            Assumir como Principal
-          </button>
         </section>
       )}
 
@@ -676,6 +536,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                   <th>Nome</th>
                   <th>Preco</th>
                   <th>Estoque</th>
+                  <th>Minimo</th>
                   <th>Secao</th>
                   <th>Criado Por</th>
                   <th>Criado Em</th>
@@ -687,7 +548,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
               <tbody>
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="produtos-empty">Nenhum produto encontrado.</td>
+                    <td colSpan={10} className="produtos-empty">Nenhum produto encontrado.</td>
                   </tr>
                 ) : (
                   paginated.map(p => {
@@ -695,6 +556,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                     const nome = getCampo(p, "Nome", "nome");
                     const preco = getCampo(p, "Preco", "preco");
                     const estoque = getCampo(p, "Estoque", "estoque");
+                    const minimo = getCampo(p, "EstoqueMinimo", "estoqueMinimo") ?? 0;
                     const secao = getCampo(p, "SecaoId", "secaoId");
                     const criadoPor = getCampo(p, "CriadoPor", "criadoPor") || "-";
                     const criadoEm = formatarDataHora(getCampo(p, "CriadoEm", "criadoEm"));
@@ -706,6 +568,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                         <td className="td-strong">{nome}</td>
                         <td>{formatarPreco(preco)}</td>
                         <td>{estoque}</td>
+                        <td>{minimo}</td>
                         <td>{secao}</td>
                         <td>{criadoPor}</td>
                         <td>{criadoEm}</td>
@@ -714,7 +577,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                         <td>
                           <div className="acoes-cell">
                             <button className="btn btn-small btn-ghost" onClick={() => abrirEditar(p)}>Editar</button>
-                            <button className="btn btn-small btn-danger" onClick={() => excluir(id)} disabled={!isPrincipal}>
+                            <button className="btn btn-small btn-danger" onClick={() => excluir(id)} disabled={!podeGerirRede}>
                               Excluir
                             </button>
                           </div>
@@ -755,20 +618,28 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
         <div className="modal-overlay">
           <div className="modal-card">
             <h3 className="modal-title">{isEditing ? "Editar Produto" : "Novo Produto"}</h3>
-            <p className="modal-subtitle">Preencha os dados basicos. Os campos de auditoria sao preenchidos automaticamente pelo usuario logado.</p>
+            <p className="modal-subtitle">
+              {podeCatalogo
+                ? "Nome, secao e imagem valem para toda a rede. Preco, estoque e estoque minimo sao desta loja."
+                : "Nome, secao e imagem pertencem ao catalogo da rede e so a matriz altera. Aqui voce ajusta preco, estoque e estoque minimo desta loja."}
+            </p>
 
             {erro && <div className="produtos-error-banner">{erro}</div>}
 
             <form onSubmit={salvar} className="modal-form">
               <div className="form-row form-row-3">
-                <input name="Nome" placeholder="Nome" value={form.Nome} onChange={handleChange} className="input" />
+                <input name="Nome" placeholder="Nome" value={form.Nome} onChange={handleChange} className="input" disabled={!podeCatalogo} />
                 <input name="Preco" placeholder="Preco" value={form.Preco} onChange={handleChange} className="input" />
                 <input name="Estoque" placeholder="Estoque" value={form.Estoque} onChange={handleChange} className="input" />
               </div>
 
               <div className="form-row form-row-2">
-                <input name="SecaoId" placeholder="Secao (Id)" value={form.SecaoId} onChange={handleChange} className="input" />
-                <input name="ImagemUrl" placeholder="URL da imagem (opcional)" value={form.ImagemUrl} onChange={handleChange} className="input" />
+                <input name="EstoqueMinimo" placeholder="Estoque minimo" value={form.EstoqueMinimo} onChange={handleChange} className="input" />
+                <input name="SecaoId" placeholder="Secao (Id)" value={form.SecaoId} onChange={handleChange} className="input" disabled={!podeCatalogo} />
+              </div>
+
+              <div className="form-row">
+                <input name="ImagemUrl" placeholder="URL da imagem (opcional)" value={form.ImagemUrl} onChange={handleChange} className="input" disabled={!podeCatalogo} />
               </div>
 
               <div className="modal-actions">

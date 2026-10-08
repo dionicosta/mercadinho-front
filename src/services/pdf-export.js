@@ -1,7 +1,20 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
+// Nome da rede e da loja impressos no topo de todos os relatorios.
+let identidadeRelatorio = "";
+
+export function definirIdentidadeRelatorio(rede, loja) {
+  identidadeRelatorio = [rede, loja].filter(Boolean).join(" - ");
+}
+
 function gerarCabecalho(doc, titulo, subtitulo) {
+  if (identidadeRelatorio) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(identidadeRelatorio, 14, 9);
+  }
+
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.text(titulo, 14, 16);
@@ -119,6 +132,7 @@ function abrirRelatorioParaImpressao(relatorio) {
   container.id = "report-print-root";
   container.innerHTML = `
     <div class="report-print-page">
+      ${identidadeRelatorio ? `<p class="subtitle">${escapeHtml(identidadeRelatorio)}</p>` : ""}
       <h1>${escapeHtml(relatorio.titulo)}</h1>
       <p class="subtitle">${escapeHtml(relatorio.subtitulo)}</p>
       ${secoesHtml}

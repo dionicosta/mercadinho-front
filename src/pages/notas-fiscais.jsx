@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import api from "../services/api";
+import api, { extrairErro } from "../services/api";
 import {
   exportarNotaFiscalDetalhePdf,
   exportarNotasFiscaisPdf,
@@ -108,9 +108,7 @@ function NotasFiscais({ sessao }) {
       fecharModal();
       carregar();
     } catch (err) {
-      setErroForm(
-        err?.response?.data?.message || err?.response?.data || "Erro ao criar nota fiscal."
-      );
+      setErroForm(extrairErro(err, "Erro ao criar nota fiscal."));
     } finally {
       setSalvando(false);
     }

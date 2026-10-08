@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import api from "../services/api";
+import api, { extrairErro } from "../services/api";
 import {
   exportarRequisicaoDetalhePdf,
   exportarRequisicoesPdf,
@@ -206,9 +206,7 @@ function Requisicoes({ sessao }) {
       fecharModal();
       carregar();
     } catch (err) {
-      setErroForm(
-        err?.response?.data?.message || err?.response?.data || "Erro ao criar requisição."
-      );
+      setErroForm(extrairErro(err, "Erro ao criar requisição."));
     } finally {
       setSalvando(false);
     }
@@ -247,9 +245,7 @@ function Requisicoes({ sessao }) {
       setDetalhe(null);
       carregar();
     } catch (err) {
-      setErroAprovar(
-        err?.response?.data?.message || err?.response?.data || "Erro ao aprovar requisição."
-      );
+      setErroAprovar(extrairErro(err, "Erro ao aprovar requisição."));
     }
   }
 
@@ -260,7 +256,7 @@ function Requisicoes({ sessao }) {
       setDetalhe(null);
       carregar();
     } catch (err) {
-      alert(err?.response?.data?.message || err?.response?.data || "Erro ao cancelar.");
+      alert(extrairErro(err, "Erro ao cancelar."));
     }
   }
 

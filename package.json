@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "start:iis": "cross-env API_TARGET=https://localhost:44376 node server.js",
+    "start:iis": "cross-env API_TARGET=https://localhost:44376 API_TLS_INSEGURO=1 node server.js",
     "start:kestrel": "cross-env API_TARGET=http://localhost:5122 node server.js",
     "start:react": "react-scripts start",
     "build": "react-scripts build",
