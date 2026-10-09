@@ -139,6 +139,10 @@ function Rede({ sessao, setSessao }) {
           <div className="rd-indicador-valor">{moeda(t.valorInventario)}</div>
         </div>
         <div className="rd-indicador">
+          <div className="rd-indicador-rotulo">Estoque a custo</div>
+          <div className="rd-indicador-valor">{moeda(t.valorCusto)}</div>
+        </div>
+        <div className="rd-indicador">
           <div className="rd-indicador-rotulo">Itens abaixo do mínimo</div>
           <div className={`rd-indicador-valor ${t.abaixoMinimo > 0 ? "rd-alerta" : ""}`}>{t.abaixoMinimo}</div>
         </div>
@@ -166,6 +170,7 @@ function Rede({ sessao, setSessao }) {
                 <th className="rd-num">Produtos com saldo</th>
                 <th className="rd-num">Unidades</th>
                 <th className="rd-num">Valor em estoque</th>
+                <th className="rd-num">A custo</th>
                 <th className="rd-num">Abaixo do mínimo</th>
                 <th className="rd-num">Notas no mês</th>
                 <th className="rd-num">Compras no mês</th>
@@ -184,6 +189,7 @@ function Rede({ sessao, setSessao }) {
                   <td className="rd-num">{l.produtosComSaldo}</td>
                   <td className="rd-num">{l.unidades}</td>
                   <td className="rd-num">{moeda(l.valorInventario)}</td>
+                  <td className="rd-num">{moeda(l.valorCusto)}</td>
                   <td className={`rd-num ${l.abaixoMinimo > 0 ? "rd-alerta" : ""}`}>{l.abaixoMinimo}</td>
                   <td className="rd-num">{l.notasMes}</td>
                   <td className="rd-num">{moeda(l.valorNotasMes)}</td>

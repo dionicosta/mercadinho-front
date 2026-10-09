@@ -27,7 +27,10 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
     Estoque: "",
     EstoqueMinimo: "",
     SecaoId: "",
-    ImagemUrl: ""
+    ImagemUrl: "",
+    CodigoBarras: "",
+    NCM: "",
+    Unidade: "UN"
   });
 
   // paginação cliente
@@ -269,7 +272,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
   }
 
   function abrirNovo() {
-    setForm({ Id: null, Nome: "", Preco: "", Estoque: "", EstoqueMinimo: "", SecaoId: "", ImagemUrl: "" });
+    setForm({ Id: null, Nome: "", Preco: "", Estoque: "", EstoqueMinimo: "", SecaoId: "", ImagemUrl: "", CodigoBarras: "", NCM: "", Unidade: "UN" });
     setIsEditing(false);
     setIsModalOpen(true);
   }
@@ -282,7 +285,10 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
       Estoque: (p.Estoque ?? p.estoque ?? "").toString(),
       EstoqueMinimo: (p.EstoqueMinimo ?? p.estoqueMinimo ?? "").toString(),
       SecaoId: (p.SecaoId ?? p.secaoId ?? "").toString(),
-      ImagemUrl: p.ImagemUrl ?? p.imagemUrl ?? ""
+      ImagemUrl: p.ImagemUrl ?? p.imagemUrl ?? "",
+      CodigoBarras: p.CodigoBarras ?? p.codigoBarras ?? "",
+      NCM: p.NCM ?? p.ncm ?? "",
+      Unidade: p.Unidade ?? p.unidade ?? "UN"
     });
     setIsEditing(true);
     setIsModalOpen(true);
@@ -332,7 +338,10 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
         Estoque: estoqueNum,
         EstoqueMinimo: minimoNum,
         SecaoId: secaoNum,
-        ImagemUrl: form.ImagemUrl || ""
+        ImagemUrl: form.ImagemUrl || "",
+        CodigoBarras: (form.CodigoBarras || "").trim(),
+        NCM: (form.NCM || "").trim(),
+        Unidade: (form.Unidade || "UN").trim()
       };
 
       try {
@@ -537,6 +546,8 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                   <th>Preco</th>
                   <th>Estoque</th>
                   <th>Minimo</th>
+                  <th>Custo medio</th>
+                  <th>Margem</th>
                   <th>Secao</th>
                   <th>Criado Por</th>
                   <th>Criado Em</th>
@@ -548,7 +559,7 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
               <tbody>
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="produtos-empty">Nenhum produto encontrado.</td>
+                    <td colSpan={12} className="produtos-empty">Nenhum produto encontrado.</td>
                   </tr>
                 ) : (
                   paginated.map(p => {
@@ -557,6 +568,10 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
                     const preco = getCampo(p, "Preco", "preco");
                     const estoque = getCampo(p, "Estoque", "estoque");
                     const minimo = getCampo(p, "EstoqueMinimo", "estoqueMinimo") ?? 0;
+                    const custo = Number(getCampo(p, "CustoMedio", "custoMedio") ?? 0);
+                    // Margem sobre o preco de venda. So aparece para produtos que ja entraram por nota fiscal.
+                    const margem = custo > 0 && Number(preco) > 0 ? ((Number(preco) - custo) / Number(preco)) * 100 : null;
+                    const codigoBarras = getCampo(p, "CodigoBarras", "codigoBarras");
                     const secao = getCampo(p, "SecaoId", "secaoId");
                     const criadoPor = getCampo(p, "CriadoPor", "criadoPor") || "-";
                     const criadoEm = formatarDataHora(getCampo(p, "CriadoEm", "criadoEm"));
@@ -565,10 +580,12 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
 
                     return (
                       <tr key={id}>
-                        <td className="td-strong">{nome}</td>
+                        <td className="td-strong" title={codigoBarras ? `EAN ${codigoBarras}` : ""}>{nome}</td>
                         <td>{formatarPreco(preco)}</td>
                         <td>{estoque}</td>
                         <td>{minimo}</td>
+                        <td>{custo > 0 ? formatarPreco(custo) : "-"}</td>
+                        <td>{margem === null ? "-" : `${margem.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`}</td>
                         <td>{secao}</td>
                         <td>{criadoPor}</td>
                         <td>{criadoEm}</td>
@@ -636,6 +653,12 @@ export default function Produtos({ setLogado, sessao: sessaoInicial, setSessao }
               <div className="form-row form-row-2">
                 <input name="EstoqueMinimo" placeholder="Estoque minimo" value={form.EstoqueMinimo} onChange={handleChange} className="input" />
                 <input name="SecaoId" placeholder="Secao (Id)" value={form.SecaoId} onChange={handleChange} className="input" disabled={!podeCatalogo} />
+              </div>
+
+              <div className="form-row form-row-3">
+                <input name="CodigoBarras" placeholder="Codigo de barras (EAN)" maxLength={14} value={form.CodigoBarras} onChange={handleChange} className="input" disabled={!podeCatalogo} />
+                <input name="NCM" placeholder="NCM (8 digitos)" maxLength={8} value={form.NCM} onChange={handleChange} className="input" disabled={!podeCatalogo} />
+                <input name="Unidade" placeholder="Unidade (UN, KG, CX)" maxLength={6} value={form.Unidade} onChange={handleChange} className="input" disabled={!podeCatalogo} />
               </div>
 
               <div className="form-row">

@@ -12,6 +12,7 @@ import Lojas from "./pages/lojas";
 import Rede from "./pages/rede";
 import Auditoria from "./pages/auditoria";
 import Conta from "./pages/conta";
+import Sefaz from "./pages/sefaz";
 import api, { EVENTO_SESSAO_ENCERRADA, extrairErro } from "./services/api";
 import { getPerfilAtual, getSessao, logout, trocarLoja } from "./services/auth";
 import { definirIdentidadeRelatorio } from "./services/pdf-export";
@@ -159,6 +160,9 @@ function App() {
             <NavLink to="/notas-fiscais" className={classeLink}>
               🧾 Notas Fiscais
             </NavLink>
+            <NavLink to="/sefaz" className={classeLink}>
+              🏛️ Notas na SEFAZ
+            </NavLink>
             <NavLink to="/requisicoes" className={classeLink}>
               📋 Requisições
             </NavLink>
@@ -213,6 +217,7 @@ function App() {
             />
             <Route path="/fornecedores" element={<Fornecedores sessao={sessao} />} />
             <Route path="/notas-fiscais" element={<NotasFiscais sessao={sessao} />} />
+            <Route path="/sefaz" element={<Sefaz sessao={sessao} />} />
             <Route path="/requisicoes" element={<Requisicoes sessao={sessao} />} />
             <Route path="/transferencias" element={<Transferencias sessao={sessao} />} />
             <Route path="/colaboradores" element={<Colaboradores sessao={sessao} />} />

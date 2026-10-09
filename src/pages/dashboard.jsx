@@ -125,6 +125,16 @@ function Dashboard({ sessao }) {
               })}
             </strong>
           </div>
+          <div className="dash-card-detalhe">
+            A custo:{" "}
+            <strong>
+              {(dados.produtos?.valorCusto ?? 0).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </strong>
+            {(dados.produtos?.semCusto ?? 0) > 0 && ` (${dados.produtos.semCusto} sem custo)`}
+          </div>
           {(dados.produtos?.abaixoMinimo ?? 0) > 0 && (
             <div className="dash-card-alerta">
               ⚠ {dados.produtos.abaixoMinimo} abaixo do mínimo
